@@ -2,71 +2,62 @@ import os
 import signal
 import cowsay
 import random
+import time
+
 chars = cowsay.char_names
 choice = random.choice(chars)
 print(cowsay.get_output_string(choice, 'Loyalty Points Editor'))
-print("1) Loyalty Points Viewer")
-print("2) Loyalty Points Editor")
-print("3) Exit")
+
 while True:
+    print("Points Viewer")
     try:
-        clear = 'clear'
+    
         
-        user = int(input("Your Choice(1 or 2 or 3): "))
-        os.system(clear)
-    except ValueError:
-        pass
-    else:
-        
-        if user == 1:
+        while True:
+            try:
+                print()
+                user_id = int(input("Customer ID: "))
 
-            while True:
-                try:
-                    print("Points Viewer")
-                    print()
-                    user_id = int(input("Customer ID: "))
+            except ValueError:
+                pass
+            else:
+                cmd = 'psql -c \'SELECT id,name,phone,loyalty_points FROM res_partner WHERE id=' +str(user_id)+ "\'"
+                os.system(cmd)
+                print("Points Editor")
+                while True:
+                    try:
+                        print()
+                    except ValueError:
+                        pass
+                    else:
 
-                except ValueError:
-                    pass
-                else:
-                    cmd = 'psql -c \'SELECT id,name,phone,loyalty_points FROM res_partner WHERE id=' +str(user_id)+ "\'"
-                    os.system(cmd)
-                    print("1) Loyalty Points Viewer")
-                    print("2) Loyalty Points Editor")
-                    print("3) Exit")
-                    
-                    break
-            
-        elif user == 2:
-            while True:
-                try:
-                    print("Points Editor")
-                    print()
-                    user_id = int(input("Customer ID: "))
-                except ValueError:
-                    pass
-                else:
-                    
-                    while True:
                         try:        
                             points = int(input("Loyalty Points: "))
+                            print()
                         except ValueError:
                             pass
                         else:
                             cmd = 'psql -c \'UPDATE res_partner set loyalty_points='+str(points)+' WHERE id='+str(user_id)+ "\'"
                             cmd1 = 'psql -c \'SELECT id,name,phone,loyalty_points FROM res_partner WHERE id=' +str(user_id)+ "\'"
+                            clear = "clear"
                             os.system(cmd)
+                            print()
                             print("Points Updated Successfully!")
+                            print()
                             os.system(cmd1)
-                            print("1) Loyalty Points Viewer")
-                            print("2) Loyalty Points Editor")
-                            print("3) Exit")
+                            print("Restarting.. .in 5s")
+                            time.sleep(1)
+                            print("Restarting.. .in 4s")
+                            time.sleep(1)
+                            print("Restarting.. .in 3s")
+                            time.sleep(1)
+                            print("Restarting.. .in 2s")
+                            time.sleep(1)
+                            print("Restarting.. .in 1s")
+                            time.sleep(1)
+                            os.system(clear)
                             break
-                    break
-        elif user == 3:
-
-            os.kill(os.getppid(), signal.SIGHUP)
-            
-
-        else:
-            pass
+ 
+    except EOFError:
+        print("Bye Bye!")
+        os.kill(os.getppid(), signal.SIGHUP)
