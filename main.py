@@ -24,15 +24,21 @@ class Screen1(Screen):
         try:
             id = int(widget.text)
             get_customer = models.execute_kw(db, uid, password, 'res.partner', 'search_read', [[['id', '=', id]]], {'fields': ['name','id']})
-            subscriber_program_list = models.execute_kw(db, uid, password, 'coupon.program', 'search_read', [[['id', '=', 11]]], {'fields': ['rule_partners_domain']})
+            subscriber_program_list = models.execute_kw(db, uid, password, 'coupon.program', 'search_read', [[['id', '=', 19]]], {'fields': ['rule_partners_domain']})
             results = subscriber_program_list[0]['rule_partners_domain']
             if len(get_customer) == 1:
                 if ("|" in results and "]]" in results) and str(id) not in results:
                     new = results.replace('["|",', '["|","|",')
                     new = new.replace(']]', f'],["id","=",{id}]]')
-                    models.execute_kw(db, uid, password, 'coupon.program', 'write',[[11], {'rule_partners_domain': f'{new}'}])
+                    models.execute_kw(db, uid, password, 'coupon.program', 'write',[[19], {'rule_partners_domain': f'{new}'}])
                     models.execute_kw(db, uid, password, 'res.partner', 'write',[[id], {'customer_level': 'Subscriber'}])
                     models.execute_kw(db, uid, password, 'res.partner', 'write', [[id], {'category_id': [1]}])
+                    models.execute_kw(db, uid, password, 'mail.message', 'create', [{
+                        'body': 'Subscriber Added by Pet World Shop (1)',
+                        'model': 'res.partner',
+                        'message_type': 'comment',
+                        'res_id': id,
+                        'author_id': 37}])
                     widget.text = ""
                     self.member_id = f"{get_customer[0]['name']} has been added to Subscriber List Successfully!"
                 else:
