@@ -54,7 +54,7 @@ class Screen1(Screen):
                 lists = models.execute_kw(db, uid, password, 'coupon.program', 'search_read', [[['id', '=', 19]]],
                                           {'fields': ['rule_partners_domain']})
                 results = lists[0]['rule_partners_domain']
-                id = widget.text.lower().replace("search", "")
+                id = widget.text.lower().replace("check", "")
                 id = int(id)
                 get_customer = models.execute_kw(db, uid, password, 'res.partner', 'search_read', [[['id', '=', id]]],
                                                  {'fields': ['name', 'category_id', 'customer_level', 'phone',
@@ -125,7 +125,7 @@ class Screen1(Screen):
                     widget.text = ""
                     self.member_id = "Member Not found!"
             #catching ValueError bacause superscript integer crash the app
-        except (ValueError,OverflowError):
+        except (ValueError, OverflowError):
             widget.text = ""
             self.member_id = "Wrong Member ID,please re-type! "
 
