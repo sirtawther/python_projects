@@ -165,6 +165,22 @@ def main():
                                             }
                                         ],
                                     )
+                                    models.execute_kw(
+                                        db,
+                                        uid,
+                                        password,
+                                        "all.loyalty.history",
+                                        "create",
+                                        [
+                                            {
+                                                "partner_id": member_id,
+                                                "transaction_type": "credit",
+                                                "points": new_points-old_points,
+                                                "state": "done",
+                                                "company_id": 1,
+                                            }
+                                        ],
+                                    )
                                     print(
                                         f"Adding {new_points-old_points} loyalty points........"
                                     )
@@ -182,6 +198,22 @@ def main():
                                                 "message_type": "comment",
                                                 "res_id": member_id,
                                                 "author_id": 3,
+                                            }
+                                        ],
+                                    )
+                                    models.execute_kw(
+                                        db,
+                                        uid,
+                                        password,
+                                        "all.loyalty.history",
+                                        "create",
+                                        [
+                                            {
+                                                "partner_id": member_id,
+                                                "transaction_type": "debit",
+                                                "points": old_points - new_points,
+                                                "state": "done",
+                                                "company_id": 1,
                                             }
                                         ],
                                     )
