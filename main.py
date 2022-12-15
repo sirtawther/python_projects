@@ -21,7 +21,7 @@ models = xmlrpc.client.ServerProxy("{}/xmlrpc/2/object".format(url))
 def main():
     while True:
         f = Figlet(font="slant")
-        print(f.renderText("Welcome!"))
+        print(f.renderText("Welcome"))
         print("1. Subscriber Program")
         print("2. Loyalty Points Editor")
         print("3. Admin Tools")
@@ -124,10 +124,11 @@ def main():
                             print("Customer Not Found! Wrong ID? ")
                             clear_output(2.5)
 
-                    except (ValueError, OverflowError):
+                    except (ValueError, OverflowError, KeyboardInterrupt):
                         print()
                         print("Wrong Member ID,please try again?")
                         clear_output(2.5)
+                        break
 
             elif choice == 2:
                 clear_output(1.5)
@@ -184,6 +185,8 @@ def main():
                                     print(
                                         f"Adding {new_points-old_points} loyalty points........"
                                     )
+                                elif old_points == new_points:
+                                    print("Same loyalt points, no need to upate! ")
                                 else:
                                     models.execute_kw(
                                         db,
@@ -239,10 +242,11 @@ def main():
                                 print("Invalid Loyalty Amount")
                                 clear_output(2)
 
-                    except (ValueError, OverflowError):
+                    except (ValueError, OverflowError,KeyboardInterrupt):
                         print()
                         print("Invalid Customer ID")
                         clear_output(2.5)
+                        break
 
             elif choice == 3:
                 print()
@@ -262,154 +266,159 @@ def main():
                     print()
                     print("Login Successful! ")
                     clear_output(1.5)
-                    f = Figlet(font="slant")
-                    print(f.renderText("Admin Tools"))
-                    print("1. Subscriber Deletion")
-                    print("2. Subscriber Export")
-                    print()
-                    try:
-                        choice_tool: int = int(input("Choice: "))
-                    except (ValueError, OverflowError):
-                        print()
-                        print("Please make choice between 1 , 2 or 3")
-                        clear_output(2)
+                    while True:
 
-                    if choice_tool == 1:
-                        clear_output(1)
-                        while True:
-                            f = Figlet(font="small")
-                            print(f.renderText("Subscriber Deletion"))
-                            try:
-                                member_id = int(input("Delete ID: ").strip())
-                                results = rule_partners_domain()
-                                customer_results = get_customer(member_id)
-                                if len(customer_results) != 0:
-                                    print()
-                                    customer_print(customer_results)
+                        try:
+                            f = Figlet(font="slant")
+                            print(f.renderText("Admin Tools"))
+                            print("1. Subscriber Deletion")
+                            print("2. Subscriber Export")
+                            print()
+                            choice_tool: int = int(input("Choice: "))
 
-                                    if (
-                                        input(
-                                            f"Remove {customer_results[0]['name']} from Subscriber Program? (Y/N): "
-                                        ).lower()
-                                        == "y"
-                                    ):
+                            if choice_tool == 1:
+                                clear_output(1)
+                                while True:
+                                    f = Figlet(font="small")
+                                    print(f.renderText("Subscriber Deletion"))
+                                    try:
+                                        member_id = int(input("Delete ID: ").strip())
+                                        results = rule_partners_domain()
+                                        customer_results = get_customer(member_id)
+                                        if len(customer_results) != 0:
+                                            print()
+                                            customer_print(customer_results)
 
-                                        if (
-                                            len(customer_results) == 1
-                                            and (
-                                                '["|","|","|"' in results
-                                                and "]]" in results
-                                            )
-                                            and f'["id","=",{member_id}]' in results
-                                        ):
-                                            delete = results.replace('["|",', "[")
-                                            delete = delete.replace(
-                                                f',["id","=",{member_id}]', ""
-                                            )
-                                            models.execute_kw(
-                                                db,
-                                                uid,
-                                                password,
-                                                "coupon.program",
-                                                "write",
-                                                [
-                                                    [16],
-                                                    {
-                                                        "rule_partners_domain": f"{delete}"
-                                                    },
-                                                ],
-                                            )
-                                            models.execute_kw(
-                                                db,
-                                                uid,
-                                                password,
-                                                "res.partner",
-                                                "write",
-                                                [[member_id], {"category_id": [5]}],
-                                            )
-                                            models.execute_kw(
-                                                db,
-                                                uid,
-                                                password,
-                                                "res.partner",
-                                                "write",
-                                                [
-                                                    [member_id],
-                                                    {"customer_level": "Member"},
-                                                ],
-                                            )
-                                            print("")
-                                            print(
-                                                f"{customer_results[0]['name']} has been removed from Subscriber Program !"
-                                            )
-                                            print("")
-                                            models.execute_kw(
-                                                db,
-                                                uid,
-                                                password,
-                                                "mail.message",
-                                                "create",
-                                                [
-                                                    {
-                                                        "body": "Subscriber Removed By IT Team.",
-                                                        "model": "res.partner",
-                                                        "message_type": "comment",
-                                                        "res_id": member_id,
-                                                        "author_id": 3,
-                                                    }
-                                                ],
-                                            )
-                                            clear_output(2.5)
+                                            if (
+                                                input(
+                                                    f"Remove {customer_results[0]['name']} from Subscriber Program? (Y/N): "
+                                                ).lower()
+                                                == "y"
+                                            ):
 
+                                                if (
+                                                    len(customer_results) == 1
+                                                    and (
+                                                        '["|","|","|"' in results
+                                                        and "]]" in results
+                                                    )
+                                                    and f'["id","=",{member_id}]' in results
+                                                ):
+                                                    delete = results.replace('["|",', "[")
+                                                    delete = delete.replace(
+                                                        f',["id","=",{member_id}]', ""
+                                                    )
+                                                    models.execute_kw(
+                                                        db,
+                                                        uid,
+                                                        password,
+                                                        "coupon.program",
+                                                        "write",
+                                                        [
+                                                            [16],
+                                                            {
+                                                                "rule_partners_domain": f"{delete}"
+                                                            },
+                                                        ],
+                                                    )
+                                                    models.execute_kw(
+                                                        db,
+                                                        uid,
+                                                        password,
+                                                        "res.partner",
+                                                        "write",
+                                                        [[member_id], {"category_id": [5]}],
+                                                    )
+                                                    models.execute_kw(
+                                                        db,
+                                                        uid,
+                                                        password,
+                                                        "res.partner",
+                                                        "write",
+                                                        [
+                                                            [member_id],
+                                                            {"customer_level": "Member"},
+                                                        ],
+                                                    )
+                                                    print("")
+                                                    print(
+                                                        f"{customer_results[0]['name']} has been removed from Subscriber Program !"
+                                                    )
+                                                    print("")
+                                                    models.execute_kw(
+                                                        db,
+                                                        uid,
+                                                        password,
+                                                        "mail.message",
+                                                        "create",
+                                                        [
+                                                            {
+                                                                "body": "Subscriber Removed By IT Team.",
+                                                                "model": "res.partner",
+                                                                "message_type": "comment",
+                                                                "res_id": member_id,
+                                                                "author_id": 3,
+                                                            }
+                                                        ],
+                                                    )
+                                                    clear_output(2.5)
+
+                                                else:
+                                                    print()
+                                                    print(
+                                                        f"{customer_results[0]['name']} is not associated in Subscriber Program !"
+                                                    )
+                                                    clear_output(2.5)
+                                                    print()
+
+                                            else:
+                                                print()
+                                                print("Operation Cancelled")
+                                                clear_output(2)
                                         else:
-                                            print()
-                                            print(
-                                                f"{customer_results[0]['name']} is not associated in Subscriber Program !"
-                                            )
-                                            clear_output(2.5)
-                                            print()
-
-                                    else:
-                                        print()
-                                        print("Operation Cancelled")
+                                            print("Customer Not Found")
+                                            clear_output(2)
+                                    except (ValueError, OverflowError,KeyboardInterrupt):
+                                        print("Wrong Member ID,please try again?")
                                         clear_output(2)
-                                else:
-                                    print("Customer Not Found")
-                                    clear_output(2)
-                            except (ValueError, OverflowError):
-                                print("Wrong Member ID,please try again?")
-                                clear_output(2)
-                    elif choice_tool == 2:
-                        clear_output(1)
-                        f = Figlet(font="small")
-                        print(f.renderText("Subscriber Export & Count"))
-                        ids = rule_partners_domain()
-                        temp = re.findall(r"\d+", ids)
-                        res = list(map(int, temp))
-                        ids_result = [res[index] for index in range(0, len(res))]
-                        order = []
-                        for i in range(len(res)):
-                            order.append(i + 1)
-                        with open("output.csv", "w", newline="") as file:
-                            writer = csv.writer(file)
-                            writer.writerow(["Member_ID", "ID"])
-                            writer.writerows(zip(order, ids_result))
+                                        break
 
-                        print()
+                            elif choice_tool == 2:
+                                clear_output(1)
+                                f = Figlet(font="small")
+                                print(f.renderText("Subscriber Export & Count"))
+                                ids = rule_partners_domain()
+                                temp = re.findall(r"\d+", ids)
+                                res = list(map(int, temp))
+                                ids_result = [res[index] for index in range(0, len(res))]
+                                order = []
+                                for i in range(len(res)):
+                                    order.append(i + 1)
+                                with open("output.csv", "w", newline="") as file:
+                                    writer = csv.writer(file)
+                                    writer.writerow(["Member_ID", "ID"])
+                                    writer.writerows(zip(order, ids_result))
 
-                        # Setting initial value of the counter to zero
-                        rowcount = 0
-                        # iterating through the whole file
-                        for row in open("output.csv"):
-                            rowcount += 1
-                        # printing the result
-                        print("Total Subscriber Count: ", rowcount - 1)
-                        print()
-                        print(
-                            '"output.csv" is generated at your file directory for your reference! '
-                        )
-                        clear_output(5)
+                                print()
 
+                                # Setting initial value of the counter to zero
+                                rowcount = 0
+                                # iterating through the whole file
+                                for row in open("output.csv"):
+                                    rowcount += 1
+                                # printing the result
+                                print("Total Subscriber Count: ", rowcount - 1)
+                                print()
+                                print(
+                                    '"output.csv" is generated at your file directory for your reference! '
+                                )
+                                clear_output(5)
+
+                        except (ValueError, OverflowError):
+                            print()
+                            print("Please make choice between 1 , 2 or 3")
+                            clear_output(2)
+                            break
                 else:
                     print()
                     print("You are not authorized to use Admin Tools")
@@ -420,10 +429,11 @@ def main():
                 print("Please make choice between 1 , 2 or 3")
                 clear_output(2.5)
 
-        except (ValueError, OverflowError):
+        except (ValueError, OverflowError,KeyboardInterrupt):
             print()
             print("Please make choice between 1 to 3")
             clear_output(2.5)
+
 
 
 def get_customer(member_id):
