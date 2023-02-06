@@ -24,7 +24,8 @@ def main():
         print(f.renderText("Welcome"))
         print("1. Subscriber Program")
         print("2. Loyalty Points Editor")
-        print("3. Admin Tools")
+        print("3. Customer & Account Association")
+        print("4. Admin Tools")
         print()
         try:
             choice: int = int(input("Choice: ").strip())
@@ -249,6 +250,48 @@ def main():
                         break
 
             elif choice == 3:
+                # while True:
+                #     try:
+                while True:
+                    clear_output(1)
+                    f = Figlet(font="small")
+                    print(f.renderText("Assocation"))
+                    try:
+                        member_id = int(input("Enter Customer ID: ").strip())
+                        customer_results = get_customer(member_id)
+                        if len(customer_results) == 1:
+                            customer_print(customer_results)
+                            print()
+                            associate_action = input("Do you Want to Associate?(Y/N): ").lower()
+                            if associate_action == "y":
+                                models.execute_kw(
+                                    db,
+                                    uid,
+                                    password,
+                                    "res.partner",
+                                    "write",
+                                    [[member_id], {"property_account_receivable_id": 2609,
+                                                   "property_account_payable_id": 2726}],
+                                )
+                                print("Associated Successfully! ")
+                                clear_output(2)
+                            else:
+                                print("Operation Cancelled!")
+                                clear_output(1)
+                        else:
+                            print()
+                            print("Customer Not Found!")
+                            clear_output(0.8)
+
+                    except (ValueError, OverflowError, KeyboardInterrupt):
+                        print()
+                        print("Operation Interrupted!")
+                        clear_output(2.5)
+                        break
+
+
+
+            elif choice == 4:
                 print()
                 clear_output(1)
                 f = Figlet(font="slant")
@@ -416,7 +459,7 @@ def main():
 
                         except (ValueError, OverflowError):
                             print()
-                            print("Please make choice between 1 , 2 or 3")
+                            print("Please make choice between 1 , 2 or 3 or 4")
                             clear_output(2)
                             break
                 else:
@@ -426,12 +469,12 @@ def main():
 
             else:
                 print()
-                print("Please make choice between 1 , 2 or 3")
+                print("Please make choice between 1 , 2 or 3 or 4")
                 clear_output(2.5)
 
         except (ValueError, OverflowError,KeyboardInterrupt):
             print()
-            print("Please make choice between 1 to 3")
+            print("Please make choice between 1 to 3 or 4")
             clear_output(2.5)
 
 
