@@ -24,10 +24,11 @@ Suppose you want to delete records from the `stock_move`, `stock_move_line`, and
 
 1. Copy the script into a file named `batch_delete.sh`.
 2. Open the file in a text editor and make the following changes:
-
+```
 database="my_db"
 tables=("stock_move" "stock_move_line" "stock_route_product")
 batch_size=100
+```
 
 
 3. Save the file.
