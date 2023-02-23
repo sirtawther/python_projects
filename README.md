@@ -1,4 +1,4 @@
-## Script for Batch Deletion of Records from PostgreSQL Tables
+## Script for Batch Deletion of Records from PostgreSQL Tables (2.0)
 
 This is a bash script that can be used to delete records from PostgreSQL tables in batches. It is useful when you want to delete a large number of records from a table and don't want to overload the server by deleting all the records at once.
 
@@ -17,6 +17,7 @@ The script does the following:
 2. Deletes records in batches of size specified by `batch_size`.
 3. Prints the number of records deleted and the number of records left to delete after each batch.
 4. Deletes any remaining records that were not part of a batch.
+5. Handles tables that does not contain "id" column.
 
 ### Example
 
