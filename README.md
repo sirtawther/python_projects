@@ -1,6 +1,6 @@
 # PSQL Batch Delete 
 written in bash.
-##Features
+#Features
 1. It will delete 100 rows per batch very fast
 2. It will show progress of how many rows deleted and how many rows left
 3. It will support delete multiple table
